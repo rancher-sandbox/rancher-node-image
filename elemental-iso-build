@@ -113,7 +113,7 @@ iso()
     fi
     build -o build/ --build-arg CONFIG="${CONFIG_DATA}" -t elemental/iso:latest
     echo $OUTPUT_DIR $OUTPUT_FILE
-    docker run -v $OUTPUT_DIR:/mnt -it elemental/iso:latest cp output.iso /mnt/$OUTPUT_FILE
+    docker run --rm -v $OUTPUT_DIR:/mnt -it elemental/iso:latest cp output.iso /mnt/$OUTPUT_FILE
 }
 
 usage()
