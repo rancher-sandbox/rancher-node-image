@@ -20,19 +20,10 @@ COPY bootargs.cfg /etc/cos/bootargs.cfg
 RUN echo "TIMESTAMP="`date +"\"%Y%m%d%H%M%S\""` >> /etc/os-release
 
 # Make sure we have a basic rootfs layout
-RUN mkdir -p /etc/systemd \
-          /etc/rancher \
-          /etc/ssh \
-          /etc/iscsi \
+RUN mkdir -p /etc/rancher \
           /etc/cni \
-          /home \
-          /opt \
-          /root \
-          /usr/libexec \
-          /var/log \
           /var/lib/rancher \
           /var/lib/kubelet \
-          /var/lib/wicked \
           /var/lib/longhorn \
           /var/lib/cni
 
