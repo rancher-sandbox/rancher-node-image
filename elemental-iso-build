@@ -97,7 +97,8 @@ iso()
     if [ -n "$CONFIG" ]; then
         CONFIG_DATA="$(<$CONFIG)"
     fi
-    build --target iso -o build/ --build-arg CONFIG="${CONFIG_DATA}"
+    build -o build/ --build-arg CONFIG="${CONFIG_DATA}" -t elemental/iso:latest
+    docker run --rm -v $OUTPUT_DIR:/mnt -it elemental/iso:latest cp output.iso /mnt/$OUTPUT_FILE
 }
 
 usage()
@@ -118,6 +119,8 @@ GIT_COMMIT=${GIT_COMMIT:-HEAD}
 NAME=${IMAGE%%:${VERSION}}
 NAME=${NAME//[^a-zA-Z0-9-@.\/_]/-}
 COS_VERSION=${COS_VERSION:-e95d49a66605d6622776391e95e175a80528e872}
+OUTPUT_DIR=${OUTPUT_DIR:-`pwd`}
+OUTPUT_FILE=${OUTPUT_FILE:-elemental.iso}
 
 if [ "$1" == dockerfile ]; then
     dockerfile
