@@ -19,6 +19,23 @@ COPY bootargs.cfg /etc/cos/bootargs.cfg
 # Make this build unique for ros-updater
 RUN echo "TIMESTAMP="`date +"\"%Y%m%d%H%M%S\""` >> /etc/os-release
 
+# Make sure we have a basic rootfs layout
+RUN mkdir -p /etc/systemd \
+          /etc/rancher \
+          /etc/ssh \
+          /etc/iscsi \
+          /etc/cni \
+          /home \
+          /opt \
+          /root \
+          /usr/libexec \
+          /var/log \
+          /var/lib/rancher \
+          /var/lib/kubelet \
+          /var/lib/wicked \
+          /var/lib/longhorn \
+          /var/lib/cni
+
 # Rebuild initrd to setup dracut with the boot configurations
 RUN mkinitrd && \
     # aarch64 has an uncompressed kernel so we need to link it to vmlinuz
