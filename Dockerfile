@@ -13,6 +13,7 @@ RUN luet install -y \
     cloud-config/network
 
 RUN mv /usr/bin/elemental.orig /usr/bin/elemental
+COPY bootargs.cfg /etc/cos/bootargs.cfg
 # Starting from here are the lines needed for RancherOS to work
 
 # Make this build unique for ros-updater
