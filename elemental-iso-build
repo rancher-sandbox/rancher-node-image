@@ -89,6 +89,8 @@ FROM tools AS iso-build
 COPY --from=os / /iso/overlay
 RUN cd /iso && \
     elemental --debug build-iso -n output --overlay-iso /iso/iso-overlay /iso/overlay
+# save 1.3GB
+RUN rm -rf /tmp/tmpluet
 EOF
 }
 
