@@ -4,16 +4,12 @@ FROM registry.opensuse.org/home/kwk/elemental/images/sle_15_sp3/rancher/rancher-
 ARG CACHEBUST
 ENV LUET_NOLOCK=true
 
-RUN mv /usr/bin/elemental /usr/bin/elemental.orig
-
 RUN luet install -y \
-    meta/cos-modules \
+    meta/cos-light \
     cloud-config/live \
     cloud-config/recovery \
     cloud-config/network
 
-RUN mv /usr/bin/elemental.orig /usr/bin/elemental
-COPY bootargs.cfg /etc/cos/bootargs.cfg
 # Starting from here are the lines needed for RancherOS to work
 
 # Make this build unique for ros-updater
