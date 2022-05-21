@@ -11,11 +11,10 @@ Notes:
 -	For additional simplicity, the image produced here will auto-install 
   - This means that a server booted with the bootstrap image will have it's drive formatted
 
-//TODO write issues and link them
 Known issues at the time of writing:
--	The creation of a Cluster object has to be done before editing the MachineInventory object to add it to the cluster. (The reconciliation trigger is currently only on edit)
-- Empty clusters created through the Rancher UI don't work correctly (due to an issue with namespaces)
-- Nodes need to be rebooted one additional time to be assigned a hostname.
+- [The creation of a Cluster object has to be done before editing the MachineInventory object to add it to the cluster. (The reconciliation trigger is currently only on edit)](https://github.com/rancher-sandbox/rancheros-operator/issues/30)
+- [Empty clusters created through the Rancher UI don't work correctly (due to an issue with namespaces)](https://github.com/rancher-sandbox/rancheros-operator/issues/29)
+- [Nodes need to be rebooted one additional time to be assigned a hostname.](https://github.com/rancher-sandbox/rancheros-operator/issues/31)
 
 
 Phases:
