@@ -15,6 +15,7 @@ Notes:
 Known issues at the time of writing:
 -	The creation of a Cluster object has to be done before editing the MachineInventory object to add it to the cluster. (The reconciliation trigger is currently only on edit)
 - Empty clusters created through the Rancher UI don't work correctly (due to an issue with namespaces)
+- Nodes need to be rebooted one additional time to be assigned a hostname.
 
 
 Phases:
@@ -51,7 +52,9 @@ helm -n cattle-rancheros-operator-system install --create-namespace rancheros-op
 
 ## Add the MachineRegistration 
 
-We need to add a MachineRegistration object to tell the operator to start listening for registrations. This can be done by applying the yaml:
+We need to add a MachineRegistration object to tell the operator to start listening for registrations. This can be done by applying the following yaml:
+
+Note: You may need to adjust the device to be `/dev/sda/` or whatever device you are installing into.
 ```
 apiVersion: rancheros.cattle.io/v1
 kind: MachineRegistration
@@ -62,8 +65,6 @@ spec:
   cloudConfig:
     rancheros:
       install:
-        automatic: true
-        powerOff: true
         device: /dev/nvme0n1
     users:
     - name: root
@@ -89,27 +90,26 @@ Note: We hope to automate this portion of the process to provide an image for ea
 You will need to run this on a computer with dockerd or moby installed (Rancher Desktop is my choice, but I’m biased)
 This is the basic set of commands to perform the iso build.
 
-
-TODO: Fix with latest features
+Note: Do this in an empty directory so the docker build doesn't take too long.
 
 ```
 REGISTRATION_URL=`kubectl get machineregistration default -ojsonpath="{.status.registrationURL}"`
 curl -s -o reg.yaml $REGISTRATION_URL
 
+curl -sLO https://raw.githubusercontent.com/rancher-sandbox/rancher-node-image/main/Dockerfile
 curl -sLO https://raw.githubusercontent.com/rancher-sandbox/rancher-node-image/main/elemental-iso-build
 
-bash elemental-iso-build ghcr.io/rancher-sandbox/rancher-node-image:latest iso ./reg.yaml
+docker build ./Dockerfile -t local/elemental-node-image
+bash elemental-iso-build local/elemental-node-image iso ./reg.yaml
 ```
 
 Now that you have an ISO image, burn it to a USB drive using something like Balena Etcher. (Or `dd` if you are on Linux and already know how to do this)
 
 # Install onto node
 
-Boot the node into the OS loaded on the USB drive. When prompted by the Grub menu, hit enter to boot into the auto-installer.
+Boot the node into the OS loaded on the USB drive. This will automatically install the new OS then reboot. Remove the drive during the reboot. 
 
-Once this completes and powers off, remove the drive. 
-
-Boot and verify that a hostname got set.
+Once it boots into the newly installed OS, check that it was assigned a hostname other than locahost. If not, reboot one more time. This is a known issue and will be fixed in an upcoming release.
 
 *Here is where you would ship the device.*
 
@@ -162,9 +162,9 @@ To tie a cluster to a specific OS version, we can use the ManagedOSImage CRD:
 kind: ManagedOSImage
 apiVersion: rancheros.cattle.io/v1
 metadata:
-  name: test-update
+  name: demo-update
 spec:
-  osImage: quay.io/costoolkit/os2:v0.1.0-alpha21-amd64
+  osImage: <your new image tag>
   clusterTargets:
   - clusterName: elemental-demo-cluster
 ```
