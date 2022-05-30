@@ -98,7 +98,7 @@ curl -s -o reg.yaml $REGISTRATION_URL
 curl -sLO https://raw.githubusercontent.com/rancher-sandbox/rancher-node-image/main/Dockerfile
 curl -sLO https://raw.githubusercontent.com/rancher-sandbox/rancher-node-image/main/elemental-iso-build
 
-docker build ./Dockerfile -t local/elemental-node-image
+docker build -t local/elemental-node-image .
 bash elemental-iso-build local/elemental-node-image iso ./reg.yaml
 ```
 
