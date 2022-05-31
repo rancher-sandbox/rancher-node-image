@@ -10,9 +10,9 @@ RUN luet install -y \
     cloud-config/recovery \
     cloud-config/network
 
-# Starting from here are the lines needed for RancherOS to work
+# Starting from here are the lines needed for Elemental to work
 
-# Make this build unique for ros-updater
+# Make this build unique for elemental-updater
 RUN echo "TIMESTAMP="`date +"\"%Y%m%d%H%M%S\""` >> /etc/os-release
 
 # Make sure we have a basic rootfs layout
