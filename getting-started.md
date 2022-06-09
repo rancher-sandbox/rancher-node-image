@@ -94,7 +94,14 @@ Note: Do this in an empty directory so the docker build doesn't take too long.
 ```
 REGISTRATION_URL=`kubectl get machineregistration default -ojsonpath="{.status.registrationURL}"`
 curl -s -o reg.yaml $REGISTRATION_URL
+```
 
+Check if the `reg.yaml` file was downloaded. If not, repeat the `curl`
+command with `--insecure` (`curl -s --insecure -o reg.yaml $REGISTRATION_URL`)
+
+Next get the Dockerfile and the ISO build script:
+
+```
 curl -sLO https://raw.githubusercontent.com/rancher-sandbox/rancher-node-image/main/Dockerfile
 curl -sLO https://raw.githubusercontent.com/rancher-sandbox/rancher-node-image/main/elemental-iso-build
 
