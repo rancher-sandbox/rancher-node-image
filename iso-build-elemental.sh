@@ -41,7 +41,7 @@ RUN echo -e \
 'fi\n'\
 'menuentry "Install Elemental Teal to disk" --class os --unrestricted {\n'\
 '    echo Loading kernel...\n'\
-'    $linux ($root)/boot/kernel.xz cdroot root=live:CDLABEL=COS_LIVE rd.live.dir=/ rd.live.squashimg=rootfs.squashfs ata-generic.all-generic-ide=1 rd.driver.post=ata_generic console=ttyS0 console=ttyS1 console=ttyS2 console=ttyS3 rd.cos.disable elemental.install.automatic=false elemental.install.config_url=/run/initramfs/live/config\n'\
+'    $linux ($root)/boot/kernel.xz cdroot root=live:CDLABEL=COS_LIVE rd.live.dir=/ rd.live.squashimg=rootfs.squashfs ata-generic.all-generic-ide=1 rd.driver.post=ata_generic console=tty0 console=ttyS0 rd.cos.disable elemental.install.automatic=false elemental.install.config_url=/run/initramfs/live/config\n'\
 '    echo Loading initrd...\n'\
 '    $initrd ($root)/boot/rootfs.xz\n'\
 '}\n'\
