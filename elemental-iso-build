@@ -9,37 +9,14 @@ build()
 dockerfile()
 {
     cat << "EOF"
-ARG IMAGE=ghcr.io/rancher-sandbox/rancher-node-image:latest
+ARG IMAGE=registry.opensuse.org/isv/rancher/elemental/teal52/15.3/rancher/elemental-node-image/5.2:latest
 
 FROM ${IMAGE} AS os
 
-FROM registry.opensuse.org/home/kwk/elemental/images/opensuse_leap_15.3/rancher/ros-builder-image-opensuse/15.3 AS tools
+FROM registry.opensuse.org/isv/rancher/elemental/teal52/15.3/rancher/elemental-builder-image:latest AS tools
 ENV LUET_NOLOCK=true
 
-RUN cd /usr/src && \
-    git clone https://github.com/rancher-sandbox/cOS-toolkit
-
-RUN mkdir -p /iso/iso-overlay/boot/grub2 /etc/luet
-RUN echo -e \
-'logging:\n'\
-'  color: false\n'\
-'  enable_emoji: false\n'\
-'general:\n'\
-'   debug: false\n'\
-'   spinner_charset: 9\n'\
-'repositories:\n'\
-'- name: "cos-toolkit-green-amd64"\n'\
-'  type: "docker"\n'\
-'  enable: true\n'\
-'  arch: amd64\n'\
-'  urls:\n'\
-'  - "quay.io/costoolkit/releases-green"\n'\
-'- name: "cos-toolkit-green"\n'\
-'  type: "docker"\n'\
-'  enable: true\n'\
-'  arch: arm64\n'\
-'  urls:\n'\
-'  - "quay.io/costoolkit/releases-green-arm64"\n' > /etc/luet/luet.yaml
+RUN mkdir -p /iso/iso-overlay/boot/grub2
 
 RUN echo -e \
 'search --file --set=root /boot/kernel.xz\n'\
@@ -63,9 +40,9 @@ RUN echo -e \
 'if [ -f ${font} ];then\n'\
 '    loadfont ${font}\n'\
 'fi\n'\
-'menuentry "RancherOS Install" --class os --unrestricted {\n'\
+'menuentry "Elemental Teal Install" --class os --unrestricted {\n'\
 '    echo Loading kernel...\n'\
-'    $linux ($root)/boot/kernel.xz cdroot root=live:CDLABEL=COS_LIVE rd.live.dir=/ rd.live.squashimg=rootfs.squashfs console=tty1 console=ttyS0 rd.cos.disable rancheros.install.automatic=true rancheros.install.config_url=/run/initramfs/live/config\n'\
+'    $linux ($root)/boot/kernel.xz cdroot root=live:CDLABEL=COS_LIVE rd.live.dir=/ rd.live.squashimg=rootfs.squashfs console=tty1 console=ttyS0 rd.cos.disable elemental.install.automatic=true elemental.install.config_url=/run/initramfs/live/config\n'\
 '    echo Loading initrd...\n'\
 '    $initrd ($root)/boot/rootfs.xz\n'\
 '}\n'\
@@ -77,7 +54,7 @@ RUN echo -e \
 '    }\n'\
 'fi\n' > /iso/iso-overlay/boot/grub2/grub.cfg
 RUN echo -e '#cloud-config\n'\
-'rancheros:\n'\
+'elemental:\n'\
 '  install:\n'\
 '    automatic: false\n' > /iso/iso-overlay/config
 #unneeded - RUN luet install --no-spinner -y toolchain/elemental-cli
@@ -88,7 +65,7 @@ WORKDIR /iso
 FROM tools AS iso-build
 COPY --from=os / /iso/overlay
 RUN cd /iso && \
-    elemental --debug build-iso -n output --overlay-iso /iso/iso-overlay /iso/overlay
+    elemental --debug build-iso -n output --overlay-iso /iso/iso-overlay ${IMAGE}
 # save 1.3GB
 RUN rm -rf /tmp/tmpluet
 EOF
